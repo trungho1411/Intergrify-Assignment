@@ -1,6 +1,6 @@
-import React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch } from '@fortawesome/free-solid-svg-icons';
+import React, { useState } from 'react';
+import 'font-awesome/css/font-awesome.min.css';
+
 export const CountryDetails = ({
   search,
   loading,
@@ -8,6 +8,9 @@ export const CountryDetails = ({
   showCountries,
   setSearch,
 }) => {
+  const [selectedCountry, setSelectedCountry] = useState(null);
+  // const [showModal, setShowModal] = useState(false);
+
   const headerStyle = {
     backgroundColor: '#2CA0F0',
     color: 'white',
@@ -34,11 +37,40 @@ export const CountryDetails = ({
 
   const searchIcon = {
     fontSize: '18px',
+    marginRight: '10px',
+    color: 'grey',
   };
+
+  const menuIcon = {
+    fontSize: '18px',
+    marginRight: '10px',
+    color: 'red',
+  };
+
+  const arrowIcon = {
+    fontSize: '20px',
+    cursor: 'pointer',
+    color: 'grey',
+    transition: '0.1s ease-in-out',
+  };
+
+  const arrowIconHover = {
+    ...arrowIcon,
+    color: 'black',
+  };
+
+  const handleClick = (country) => {
+    setSelectedCountry(country);
+    // setShowModal(true);
+  };
+
   return (
     <div>
       <header style={headerStyle}>
-        <h3>Country</h3>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <i className='fa fa-bars' style={{ menuIcon }} />
+          <h3 style={{ marginLeft: '10px', color: 'white' }}>Country</h3>
+        </div>
         <div style={searchContainer}>
           <i className='fa fa-search' style={searchIcon} />
           <input
@@ -51,7 +83,7 @@ export const CountryDetails = ({
       </header>
 
       {loading && <div>Loading...</div>}
-      {error && <div>An error occurred while loading the countries.</div>}
+      {error && <div>Error!</div>}
       {!loading && !error && (
         <table>
           <thead>
@@ -61,6 +93,7 @@ export const CountryDetails = ({
               <th>Region</th>
               <th>Population</th>
               <th>Language</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -73,6 +106,17 @@ export const CountryDetails = ({
                 <td>{country.region}</td>
                 <td>{country.population}</td>
                 <td>{Object.values(country.languages)}</td>
+                <td>
+                  <i
+                    className='fa fa-chevron-right'
+                    style={
+                      country === selectedCountry ? arrowIconHover : arrowIcon
+                    }
+                    onClick={() => handleClick(country)}
+                    onMouseEnter={() => setSelectedCountry(country)}
+                    onMouseLeave={() => setSelectedCountry(null)}
+                  ></i>
+                </td>
               </tr>
             ))}
           </tbody>
