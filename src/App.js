@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { CountryDetails } from './components/CountryDetails';
+import { CountryInformation } from './components/CountryInformation';
+import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
 
 const App = () => {
   const [countries, setCountries] = useState([]);
@@ -29,7 +31,6 @@ const App = () => {
     if (countries.length > 0) {
       const filteredCountries = countries.filter(
         (country) =>
-          typeof country.name.common === 'string' &&
           country.name.common.toLowerCase().indexOf(search.toLowerCase()) !== -1
       );
       setShowCountries(filteredCountries.slice(0, 5));
@@ -37,15 +38,22 @@ const App = () => {
   }, [countries, search]);
 
   return (
-    <div>
-      <CountryDetails
-        search={search}
-        loading={loading}
-        error={error}
-        showCountries={showCountries}
-        setSearch={setSearch}
+    <Router>
+      <Route
+        exact
+        path='/'
+        render={() => (
+          <CountryDetails
+            search={search}
+            setSearch={setSearch}
+            loading={loading}
+            error={error}
+            showCountries={showCountries}
+          />
+        )}
       />
-    </div>
+      <Route exact path='/name/:name' render={() => <CountryInformation />} />
+    </Router>
   );
 };
 

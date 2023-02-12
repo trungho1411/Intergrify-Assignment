@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
-import { Table, Button } from 'react-bootstrap';
+import { Table } from 'react-bootstrap';
+import { useHistory } from 'react-router-dom';
 import 'font-awesome/css/font-awesome.min.css';
+import './../App.css';
+import { CountryInformation } from './CountryInformation';
 
 export const CountryDetails = ({
   loading,
@@ -9,6 +12,7 @@ export const CountryDetails = ({
   setSearch,
 }) => {
   const [selectedCountry, setSelectedCountry] = useState(null);
+  const history = useHistory();
 
   const headerStyle = {
     backgroundColor: '#2CA0F0',
@@ -45,15 +49,17 @@ export const CountryDetails = ({
     marginRight: '10px',
   };
 
-  const arrowIcon = {
-    fontSize: '20px',
+  const arrowRightIcon = {
+    fontSize: '15px',
     cursor: 'pointer',
     color: 'grey',
     transition: '0.1s ease-in-out',
+    verticalAlign: 'middle',
+    textAlign: 'left',
   };
 
   const arrowIconHover = {
-    ...arrowIcon,
+    ...arrowRightIcon,
     color: 'black',
   };
 
@@ -66,6 +72,7 @@ export const CountryDetails = ({
 
   const handleClick = (country) => {
     setSelectedCountry(country);
+    history.push(`/name/${country.name.common}`);
   };
 
   return (
@@ -90,7 +97,7 @@ export const CountryDetails = ({
         {loading && <div>Loading...</div>}
         {error && <div>Error!</div>}
         {!loading && !error && (
-          <Table striped bordered hover>
+          <Table>
             <thead>
               <tr>
                 <th>Flags</th>
@@ -98,24 +105,37 @@ export const CountryDetails = ({
                 <th>Region</th>
                 <th>Population</th>
                 <th>Language</th>
-                <th>Details</th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
               {showCountries.map((country) => (
                 <tr key={country.name.common}>
                   <td>
-                    <img src={country.flags.png} alt={country.flags.alt} />
+                    <img
+                      src={country.flags.png}
+                      alt={country.flags.alt}
+                      style={{ width: '30%', height: '50%' }}
+                    />
                   </td>
                   <td>{country.name.common}</td>
                   <td>{country.region}</td>
                   <td>{country.population}</td>
-                  <td>{Object.values(country.languages)}</td>
+                  <td>
+                    <ul>
+                      {country.languages &&
+                        Object.values(country.languages).map((p) => (
+                          <li values={p}>{p}</li>
+                        ))}
+                    </ul>
+                  </td>
                   <td onClick={() => handleClick(country)}>
                     <i
                       className='fa fa-chevron-right'
                       style={
-                        country === selectedCountry ? arrowIconHover : arrowIcon
+                        country === selectedCountry
+                          ? arrowIconHover
+                          : arrowRightIcon
                       }
                       onMouseEnter={() => setSelectedCountry(country)}
                       onMouseLeave={() => setSelectedCountry(null)}
@@ -126,7 +146,6 @@ export const CountryDetails = ({
             </tbody>
           </Table>
         )}
-
         {/* {selectedCountry && (
           <div style={countryBox}>
             <h3>{selectedCountry.name.common}</h3>
@@ -146,101 +165,3 @@ export const CountryDetails = ({
     </div>
   );
 };
-// export const CountryDetails = ({
-//   search,
-//   loading,
-//   error,
-//   showCountries,
-//   setSearch,
-// }) => {
-//   const [selectedCountry, setSelectedCountry] = useState(null);
-
-//   const handleClick = (country) => {
-//     setSelectedCountry(country);
-//   };
-
-//   return (
-//     <Container>
-//       <Row className='justify-content-md-center'>
-//         <Col md={12}>
-//           <InputGroup className='mb-3'>
-//             <InputGroup.Prepend>
-//               <InputGroup.Text id='basic-addon1'>
-//                 <i className='fa fa-search' />
-//               </InputGroup.Text>
-//             </InputGroup.Prepend>
-//             <FormControl
-//               placeholder='Search by country name'
-//               aria-label='Search by country name'
-//               aria-describedby='basic-addon1'
-//               onChange={(event) => setSearch(event.target.value)}
-//             />
-//           </InputGroup>
-//         </Col>
-//       </Row>
-//       <Row>
-//         <Col md={12}>
-//           {loading && <div>Loading...</div>}
-//           {error && <div>Error!</div>}
-//           {!loading && !error && (
-//             <Table striped bordered hover>
-//               <thead>
-//                 <tr>
-//                   <th>Flags</th>
-//                   <th>Name</th>
-//                   <th>Region</th>
-//                   <th>Population</th>
-//                   <th>Language</th>
-//                   <th>Details</th>
-//                 </tr>
-//               </thead>
-//               <tbody>
-//                 {showCountries.map((country) => (
-//                   <tr key={country.name.common}>
-//                     <td>
-//                       <img src={country.flags.png} alt={country.flags.alt} />
-//                     </td>
-//                     <td>{country.name.common}</td>
-//                     <td>{country.region}</td>
-//                     <td>{country.population}</td>
-//                     <td>{Object.values(country.languages)}</td>
-//                     <td>
-//                       <i
-//                         className='fa fa-chevron-right'
-//                         style={
-//                           country === selectedCountry
-//                             ? {
-//                                 fontSize: '20px',
-//                                 cursor: 'pointer',
-//                                 color: 'black',
-//                                 transition: '0.1s ease-in-out',
-//                               }
-//                             : {
-//                                 fontSize: '20px',
-//                                 cursor: 'pointer',
-//                                 color: 'grey',
-//                                 transition: '0.1s ease-in-out',
-//                               }
-//                         }
-//                         onClick={() => handleClick(country)}
-//                         onMouseEnter={() => setSelectedCountry(country)}
-//                         onMouseLeave={() => setSelectedCountry(null)}
-//                       ></i>
-//                     </td>
-//                   </tr>
-//                 ))}
-//               </tbody>
-//             </Table>
-//           )}
-//         </Col>
-//       </Row>
-//       {selectedCountry && (
-//         <Row>
-//           <Col md={12}>
-//             {/* <CountryInformation country={selectedCountry} /> */}
-//           </Col>
-//         </Row>
-//       )}
-//     </Container>
-//   );
-// };
