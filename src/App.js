@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { CountryDetails } from './components/CountryDetails';
 import { CountryInformation } from './components/CountryInformation';
-import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Route } from 'react-router-dom';
 
 const App = () => {
   const [countries, setCountries] = useState([]);
@@ -10,6 +10,8 @@ const App = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const [showCountries, setShowCountries] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [countriesPerPage] = useState(5);
 
   useEffect(() => {
     const fetchCountries = async () => {
@@ -37,6 +39,27 @@ const App = () => {
     }
   }, [countries, search]);
 
+  //logic for displaying current countries
+  const indexOfLastCountry = currentPage * countriesPerPage;
+  const indexOfFirstCountry = indexOfLastCountry - countriesPerPage;
+  const currentCountries = showCountries.slice(
+    indexOfFirstCountry,
+    indexOfLastCountry
+  );
+
+  //change page
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+  //logic for displaying page numbers
+  const pageNumbers = [];
+  for (
+    let i = 1;
+    i <= Math.ceil(showCountries.length / countriesPerPage);
+    i++
+  ) {
+    pageNumbers.push(i);
+  }
+
   return (
     <Router>
       <Route
@@ -49,6 +72,8 @@ const App = () => {
             loading={loading}
             error={error}
             showCountries={showCountries}
+            pageNumbers={pageNumbers}
+            paginate={paginate}
           />
         )}
       />
